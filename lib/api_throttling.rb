@@ -24,16 +24,15 @@ class ApiThrottling
     end
     
     begin
-	    cache = @handler.new(@options[:cache])
-	    key = generate_key(env, auth)
-	    cache.increment(key)
-	    return over_rate_limit if cache.get(key).to_i > @options[:requests_per_hour]
-	  rescue Errno::ECONNREFUSED
-	    # If Redis-server is not running, instead of throwing an error, we simply do not throttle the API
-	    # It's better if your service is up and running but not throttling API, then to have it throw errors for all users
-	    # Make sure you monitor your redis-server so that it's never down. monit is a great tool for that.
-	  end
-    @app.call(env)
+      cache = @handler.new(@options[:cache])
+      key = generate_key(env, auth)
+      cache.increment(key)
+      return over_rate_limit if cache.get(key).to_i > @options[:requests_per_hour]
+    rescue Exception => e
+      handle_exception(e)      
+    end
+
+    @app.call(env)   
   end
   
   def request_matches?(req)
@@ -68,6 +67,15 @@ class ApiThrottling
       [body_text]
     ]
   end
+
+  def handle_exception(exception)
+    if defined?(Rails) && Rails.env.development?
+      raise exception
+    else
+      # FIXME notify hoptoad?
+    end
+  end
+  
 end
 
 
