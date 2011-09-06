@@ -11,10 +11,10 @@ class ApiThrottling
   end
   
   def call(env, options={})
-    if @options[:only] or @options[:except]
+    if @options[:urls]
       req = Rack::Request.new(env)
       # call the app normally cause the path restriction didn't match
-      return @app.call(env) unless path_matches?(req.path)
+      return @app.call(env) unless request_matches?(req)
     end
 
     if @options[:auth]
@@ -36,10 +36,10 @@ class ApiThrottling
     @app.call(env)
   end
   
-  def path_matches?(path)
-    only = @options[:only] || ''
-    except = @options[:except] || ' '
-    (path =~ /^#{only}/) and !(path =~ /^#{except}/)
+  def request_matches?(req)
+    @options[:urls].any? do |url|
+      "#{req.request_method} #{req.path}".match(url)
+    end    
   end
 
   def generate_key(env, auth)
