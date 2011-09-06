@@ -3,6 +3,7 @@ require 'rack'
 require File.expand_path(File.dirname(__FILE__) + '/handlers/handlers')
 
 class ApiThrottling
+
   def initialize(app, options={})
     @app = app
     @options = {:requests_per_hour => 60, :cache=>:redis, :auth=>true}.merge(options)
@@ -10,7 +11,11 @@ class ApiThrottling
     raise "Sorry, we couldn't find a handler for the cache you specified: #{@options[:cache]}" unless @handler
   end
   
-  def call(env, options={})
+  def call(env)
+    dup._call(env)
+  end
+
+  def _call(env)
     if @options[:urls]
       req = Rack::Request.new(env)
       # call the app normally cause the path restriction didn't match
@@ -75,7 +80,7 @@ class ApiThrottling
       # FIXME notify hoptoad?
     end
   end
-  
+
 end
 
 
