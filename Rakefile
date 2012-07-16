@@ -8,7 +8,7 @@ begin
     gemspec.summary = "Rack Middleware to impose a rate limit on a web service (aka API Throttling)"
     gemspec.email = "duff.john@gmail.com"
     gemspec.homepage = "http://github.com/jduff/api-throttling/tree"
-    gemspec.description = "TODO"
+    gemspec.description = "Rack Middleware to impose a rate limit on a web service (aka API Throttling)"
     gemspec.authors = ["Luc Castera", "John Duff"]
     gemspec.add_development_dependency('context')
   end
