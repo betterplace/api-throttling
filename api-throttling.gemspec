@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
     "LICENSE",
     "README.md",
     "Rakefile",
-    "TODO.md",
+    "TODOHELLORUBYGEMS.md",
     "VERSION.yml",
     "api-throttling.gemspec",
     "config.ru",
